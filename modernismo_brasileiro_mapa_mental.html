@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modernismo no Brasil – Mapa Mental</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --center-bg: #fff;
+    --center-text: #0d0d0f;
+    --g1: #e8a020;
+    --g2: #4CAF7D;
+    --g3: #7B6FE8;
+    --line: rgba(255,255,255,0.08);
+    --card-bg: rgba(255,255,255,0.04);
+    --card-border: rgba(255,255,255,0.1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: #e8e4dc;
+    font-family: 'Lora', serif;
+    min-height: 100vh;
+    padding: 20px 16px 60px;
+    overflow-x: hidden;
+  }
+
+  /* ---- HEADER ---- */
+  .page-title {
+    text-align: center;
+    margin-bottom: 32px;
+    animation: fadeDown 0.7s ease both;
+  }
+  .page-title h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 5vw, 2.8rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    color: #fff;
+  }
+  .page-title p {
+    font-size: 0.85rem;
+    opacity: 0.45;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* ---- CENTER NODE ---- */
+  .center-node {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 48px;
+    width: clamp(180px, 55vw, 320px);
+    height: clamp(180px, 55vw, 320px);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffffff, #d4d0c8);
+    box-shadow: 0 0 80px rgba(255,255,255,0.12), 0 0 0 3px rgba(255,255,255,0.25);
+    text-align: center;
+    padding: 24px;
+    animation: pulse 4s ease-in-out infinite, fadeIn 0.9s ease both;
+    position: relative;
+  }
+  .center-node h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(0.95rem, 3.5vw, 1.45rem);
+    color: #0d0d0f;
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .center-node span {
+    display: block;
+    font-size: clamp(0.65rem, 2vw, 0.8rem);
+    color: #555;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* ---- GENERATION CARDS ---- */
+  .gen-section {
+    max-width: 860px;
+    margin: 0 auto 36px;
+    border-radius: 18px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    overflow: hidden;
+    animation: slideUp 0.6s ease both;
+  }
+  .gen-section:nth-child(2) { animation-delay: 0.15s; }
+  .gen-section:nth-child(3) { animation-delay: 0.30s; }
+  .gen-section:nth-child(4) { animation-delay: 0.45s; }
+
+  .gen-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .gen1 .gen-header { background: linear-gradient(135deg, rgba(232,160,32,0.22), rgba(232,160,32,0.06)); border-bottom: 2px solid var(--g1); }
+  .gen2 .gen-header { background: linear-gradient(135deg, rgba(76,175,125,0.22), rgba(76,175,125,0.06)); border-bottom: 2px solid var(--g2); }
+  .gen3 .gen-header { background: linear-gradient(135deg, rgba(123,111,232,0.22), rgba(123,111,232,0.06)); border-bottom: 2px solid var(--g3); }
+
+  .gen-badge {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 900;
+    flex-shrink: 0;
+  }
+  .gen1 .gen-badge { background: var(--g1); color: #0d0d0f; }
+  .gen2 .gen-badge { background: var(--g2); color: #0d0d0f; }
+  .gen3 .gen-badge { background: var(--g3); color: #fff; }
+
+  .gen-title h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
+    font-weight: 700;
+  }
+  .gen1 .gen-title h3 { color: var(--g1); }
+  .gen2 .gen-title h3 { color: var(--g2); }
+  .gen3 .gen-title h3 { color: var(--g3); }
+  .gen-title p { font-size: 0.78rem; opacity: 0.55; font-style: italic; margin-top: 2px; }
+
+  .toggle-arrow {
+    margin-left: auto;
+    font-size: 1.2rem;
+    opacity: 0.5;
+    transition: transform 0.3s;
+  }
+  .gen-section.open .toggle-arrow { transform: rotate(180deg); }
+
+  /* ---- BODY ---- */
+  .gen-body {
+    display: none;
+    padding: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .gen-section.open .gen-body { display: grid; }
+
+  .branch {
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    padding: 16px;
+    border-left: 3px solid;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .branch:hover { transform: translateY(-3px); background: rgba(255,255,255,0.06); }
+  .gen1 .branch { border-color: var(--g1); }
+  .gen2 .branch { border-color: var(--g2); }
+  .gen3 .branch { border-color: var(--g3); }
+
+  .branch h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+  .branch ul { list-style: none; }
+  .branch ul li {
+    font-size: 0.82rem;
+    padding: 3px 0;
+    line-height: 1.4;
+    opacity: 0.85;
+  }
+  .branch ul li::before { content: "→ "; opacity: 0.4; }
+
+  /* ---- POEM BOX ---- */
+  .poem-box {
+    grid-column: 1 / -1;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px dashed;
+    font-style: italic;
+    line-height: 1.75;
+    font-size: 0.9rem;
+  }
+  .gen2 .poem-box { border-color: rgba(76,175,125,0.4); }
+  .gen3 .poem-box { border-color: rgba(123,111,232,0.4); }
+  .poem-box h4 {
+    font-family: 'Playfair Display', serif;
+    font-style: normal;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    opacity: 0.55;
+  }
+  .poem-box blockquote { padding-left: 12px; border-left: 2px solid rgba(255,255,255,0.15); }
+  .poem-box .poem-author { font-style: normal; font-size: 0.78rem; opacity: 0.45; margin-top: 10px; }
+
+  /* ---- LEGEND ---- */
+  .legend {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    animation: fadeIn 1s ease 0.6s both;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; opacity: 0.7;
+  }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+  @keyframes slideUp  { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes pulse    {
+    0%,100% { box-shadow: 0 0 80px rgba(255,255,255,0.12), 0 0 0 3px rgba(255,255,255,0.25); }
+    50%      { box-shadow: 0 0 120px rgba(255,255,255,0.22), 0 0 0 6px rgba(255,255,255,0.18); }
+  }
+
+  /* print */
+  @media print {
+    body { background: #fff; color: #000; }
+    .gen-body { display: grid !important; }
+    .toggle-arrow { display: none; }
+    .center-node { background: #eee; box-shadow: none; animation: none; }
+    .branch:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">
+  <h1>Modernismo no Brasil</h1>
+  <p>Mapa Mental · Literatura · 3º ano MB · Trabalho Bimestral</p>
+</div>
+
+<!-- CENTER NODE -->
+<div class="center-node">
+  <div>
+    <h2>Modernismo<br>no Brasil</h2>
+    <span>1922 – 1960</span>
+  </div>
+</div>
+
+<!-- ===== GERAÇÃO 1 ===== -->
+<div class="gen-section gen1 open">
+  <div class="gen-header" onclick="toggle(this)">
+    <div class="gen-badge">1ª</div>
+    <div class="gen-title">
+      <h3>1ª Geração – Fase Heroica</h3>
+      <p>1922 – 1930</p>
+    </div>
+    <div class="toggle-arrow">▼</div>
+  </div>
+  <div class="gen-body">
+
+    <div class="branch">
+      <h4>🏛 Contexto Histórico</h4>
+      <ul>
+        <li>Brasil agrário, dominado pela oligarquia do café</li>
+        <li>Influência das vanguardas europeias (Cubismo, Futurismo, Dadaísmo)</li>
+        <li>Tensão entre tradição e renovação cultural</li>
+        <li>Início da industrialização em São Paulo</li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <h4>✨ Características</h4>
+      <ul>
+        <li>Ruptura com o Parnasianismo e o Simbolismo</li>
+        <li>Verso livre – sem métricas rígidas</li>
+        <li>Linguagem coloquial e humor irônico</li>
+        <li>Valorização da cultura popular brasileira</li>
+        <li>Experimentalismo e irreverência</li>
+        <li>Temática nacionalista</li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <h4>🎭 Semana de Arte Moderna</h4>
+      <ul>
+        <li>Data: 13 a 18 de fevereiro de 1922</li>
+        <li>Local: Teatro Municipal de São Paulo</li>
+        <li>Objetivo: renovar a arte e a cultura nacionais</li>
+        <li>Exposições, concertos e recitais de poesia</li>
+        <li>Marco inicial do Modernismo brasileiro</li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <h4>🗣 Linguagem</h4>
+      <ul>
+        <li>Português do Brasil (não de Portugal)</li>
+        <li>Oralidade e gírias</li>
+        <li>Paródia de textos clássicos</li>
+        <li>Imagens fragmentadas</li>
+        <li>Humor e ironia</li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <h4>✍️ Obras e Autores</h4>
+      <ul>
+        <li><strong>Mário de Andrade</strong> – Pauliceia Desvairada (1922); Macunaíma (1928)</li>
+        <li><strong>Oswald de Andrade</strong> – Pau-Brasil (1925); Manifesto Antropófago (1928)</li>
+        <li><strong>Manuel Bandeira</strong> – Libertinagem (1930)</li>
+        <li><strong>Tarsila do Amaral</strong> – pinturas Abaporu, Operários</li>
+        <li><strong>Anita Malfatti</strong> – precursora nas artes plásticas</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== GERAÇÃO 2 ===== -->
+<div class="gen-section gen2 open">
+  <div class="gen-header" onclick="toggle(this)">
+    <div class="gen-badge">2ª</div>
+    <div class="gen-title">
+      <h3>2ª Geração – Fase de Consolidação</h3>
+      <p>1930 – 1945</p>
+    </div>
+    <div class="toggle-arrow">▼</div>
+  </div>
+  <div class="gen-body">
+
+    <div class="branch">
+      <h4>🏛 Contexto Histórico</h4>
+      <ul>
+        <li>Era Vargas – Estado Novo (1937–1945)</li>
+        <li>Grande Depressão de 1929 e seus reflexos</li>
+        <li>Ascensão do fascismo na Europa</li>
+        <li>Industrialização acelerada no Brasil</li>
+        <li>Tensões sociais e políticas intensas</li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <h4>✨ Características</h4>
+      <ul>
+        <li>Maturidade e aprofundamento modernista</li>
+        <li>Poesia mais introspectiva e lírica</li>
+        <li>Prosa regionalista com denúncia social</li>
+        <li>Espiritualidade e existencialismo</li>
+        <li>Nordeste como cenário e temática central</li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <h4>✍️ Principais Obras e Autores</h4>
+      <ul>
+        <li><strong>Carlos Drummond de Andrade</strong> – Alguma Poesia (1930), Sentimento do Mundo (1940)</li>
+        <li><strong>Jorge Amado</strong> – Cacau (1933), Capitães da Areia (1937)</li>
+        <li><strong>Graciliano Ramos</strong> – Vidas Secas (1938), São Bernardo (1934)</li>
+        <li><strong>José Lins do Rego</strong> – Menino de Engenho (1932)</li>
+        <li><strong>Cecília Meireles</strong> – Viagem (1939)</li>
+        <li><strong>Rachel de Queiroz</strong> – O Quinze (1930)</li>
+      </ul>
+    </div>
+
+    <!-- POEMA DA 2ª GERAÇÃO -->
+    <div class="poem-box">
+      <h4>📜 Poema do Período – Carlos Drummond de Andrade</h4>
+      <blockquote>
+        No meio do caminho tinha uma pedra<br>
+        tinha uma pedra no meio do caminho<br>
+        tinha uma pedra<br>
+        no meio do caminho tinha uma pedra.<br><br>
+        Nunca me esquecerei desse acontecimento<br>
+        na vida de minhas retinas tão fatigadas.<br>
+        Nunca me esquecerei que no meio do caminho<br>
+        tinha uma pedra<br>
+        tinha uma pedra no meio do caminho<br>
+        no meio do caminho tinha uma pedra.
+      </blockquote>
+      <p class="poem-author">— "No Meio do Caminho" (1928) · Carlos Drummond de Andrade</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== GERAÇÃO 3 ===== -->
+<div class="gen-section gen3 open">
+  <div class="gen-header" onclick="toggle(this)">
+    <div class="gen-badge">3ª</div>
+    <div class="gen-title">
+      <h3>3ª Geração – Pós-Modernismo</h3>
+      <p>1945 – 1960</p>
+    </div>
+    <div class="toggle-arrow">▼</div>
+  </div>
+  <div class="gen-body">
+
+    <div class="branch">
+      <h4>🌍 Contexto Histórico</h4>
+      <ul>
+        <li>Pós-Segunda Guerra Mundial (1945)</li>
+        <li>Redemocratização no Brasil (1945)</li>
+        <li>Guerra Fria – EUA × URSS</li>
+        <li>Criação da ONU (1945)</li>
+        <li>Construção de Brasília (1960)</li>
+        <li>Boom econômico do governo JK</li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <h4>✨ Características</h4>
+      <ul>
+        <li>Retomada do rigor formal na poesia (Geração de 45)</li>
+        <li>Prosa inovadora – fluxo de consciência</li>
+        <li>Universalismo e existencialismo</li>
+        <li>Poesia concreta (experimentalismo visual)</li>
+        <li>Psicologia das personagens aprofundada</li>
+        <li>Linguagem simbólica e mítica</li>
+      </ul>
+    </div>
+
+    <div class="branch">
+      <h4>✍️ Principais Autores</h4>
+      <ul>
+        <li><strong>João Guimarães Rosa</strong> – Grande Sertão: Veredas (1956)</li>
+        <li><strong>Clarice Lispector</strong> – A Maçã no Escuro (1961)</li>
+        <li><strong>João Cabral de Melo Neto</strong> – Morte e Vida Severina (1956)</li>
+        <li><strong>Ariano Suassuna</strong> – Auto da Compadecida (1955)</li>
+        <li><strong>Augusto de Campos</strong> – Poesia Concreta</li>
+      </ul>
+    </div>
+
+    <!-- TRECHO DA 3ª GERAÇÃO -->
+    <div class="poem-box">
+      <h4>📜 Trecho do Período – João Cabral de Melo Neto</h4>
+      <blockquote>
+        O homem, porque vive,<br>
+        briga com o que existe.<br>
+        E sendo ele de carne<br>
+        entre as pedras que crescem,<br>
+        espera, de joelhos,<br>
+        um milagre do orvalho:<br>
+        e sempre o sol é mais<br>
+        e sempre a sede é mais.
+      </blockquote>
+      <p class="poem-author">— trecho inspirado em "Morte e Vida Severina" (1956) · João Cabral de Melo Neto</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--g1)"></div> 1ª Geração · Fase Heroica (1922–1930)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--g2)"></div> 2ª Geração · Consolidação (1930–1945)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--g3)"></div> 3ª Geração · Pós-Modernismo (1945–1960)</div>
+  <div class="legend-item" style="margin-left:auto; font-size:0.72rem; opacity:0.35;">Clique nos cabeçalhos para expandir/recolher</div>
+</div>
+
+<script>
+  function toggle(header) {
+    const section = header.parentElement;
+    section.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
